@@ -3,12 +3,14 @@
 
 // Network credentials
 const char* ssid = "myHomeNetwork";
+// telmo sensitive info
 const char* password = "s3CretW1FiP4ssword";
 
 // API server details
 const char* serverName = "http://example.com/api/data";
 
 // AWS token
+// telmo sensitive info
 const String aws_secret = "AKIAIMNOJVGFDXXXE4OA";
 
 // Function to connect to the Wi-Fi network
