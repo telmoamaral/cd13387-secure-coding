@@ -65,8 +65,7 @@ int check_login(const char* username, const char* password) {
         // Remove the newline character
         trim_newline(line);
 
-
-        // Split the line into username and password
+        // Split the line into username, salt hex and hashed password
         char* token = strtok(line, ":");
         if (token != NULL) {
             strcpy(file_username, token);
