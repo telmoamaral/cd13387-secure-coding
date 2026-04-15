@@ -9,7 +9,8 @@ term_handler() {
 # Trap termination signals
 trap 'term_handler' INT TERM
 
+/app/generate_hashed_users
+
 while true; do
-  /app/generate_hashed_users
   /app/login
 done

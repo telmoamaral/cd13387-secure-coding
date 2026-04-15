@@ -7,6 +7,7 @@
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
 #define MAX_COMMAND_LENGTH 50
+
 #define FILE_HASHED_USERS "hashed_users.txt"
 #define MAX_HASH_LENGTH 65
 #define HEX_SALT_LENGTH 5
