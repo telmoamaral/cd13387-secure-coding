@@ -10,5 +10,6 @@ term_handler() {
 trap 'term_handler' INT TERM
 
 while true; do
+  /app/generate_hashed_users
   /app/login
 done
