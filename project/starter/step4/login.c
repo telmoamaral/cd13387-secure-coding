@@ -4,6 +4,7 @@
 #include "hash_utils.h"
 
 #define MAX_LINE_LENGTH 200
+#define MAX_USER_INPUT_LENGTH 100
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
 #define MAX_COMMAND_LENGTH 50
@@ -66,8 +67,7 @@ int check_login(const char* username, const char* password) {
         // Remove the newline character
         trim_newline(line);
 
-
-        // Split the line into username and password
+        // Split the line into username, salt hex, hashed password and counter
         char* token = strtok(line, ":");
         if (token != NULL) {
             strcpy(file_username, token);
@@ -100,19 +100,33 @@ int check_login(const char* username, const char* password) {
     return 0;  // Login failed
 }
 
+void sanitize_user_input(const char* user_input, char* output, uint len){
+    // Safe copy
+
+    // Ensure null termination
+}
+
 int main() {
+    char user_input[MAX_USER_INPUT_LENGTH];
+    char user_input_2[MAX_USER_INPUT_LENGTH];
     char username[MAX_USERNAME_LENGTH];
     char password[MAX_PASSWORD_LENGTH];
     char command[MAX_COMMAND_LENGTH];
 
     // Prompt user for username and password
     printf("Enter username: ");
-    fgets(username, sizeof(username), stdin);
-    trim_newline(username);  // Remove newline character
+    fgets(user_input, sizeof(user_input), stdin);
+    trim_newline(user_input);  // Remove newline character
+    strncpy(username, user_input, MAX_USERNAME_LENGTH - 1);
+    username[MAX_USERNAME_LENGTH - 1] = '\0';
+    printf("debug username: %s\n", username);
 
     printf("Enter password: ");
-    fgets(password, sizeof(password), stdin);
-    trim_newline(password);  // Remove newline character
+    fgets(user_input_2, sizeof(user_input_2), stdin);
+    trim_newline(user_input_2);  // Remove newline character
+    strncpy(password, user_input_2, MAX_PASSWORD_LENGTH - 1);
+    password[MAX_PASSWORD_LENGTH - 1] = '\0';
+    printf("debug password: %s\n", password);
 
     // Check login credentials
     if (check_login(username, password)) {
