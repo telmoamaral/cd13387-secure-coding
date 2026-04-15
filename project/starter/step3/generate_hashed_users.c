@@ -23,8 +23,6 @@ int main() {
     FILE *input_file = fopen(FILE_INPUT, "r");
     FILE *output_file = fopen(FILE_OUTPUT, "w");
 
-    printf("Running generate_hashed_users...\n");
-    
     if (input_file == NULL) {
         printf("Could not open %s for reading\n", FILE_INPUT);
         return 1;

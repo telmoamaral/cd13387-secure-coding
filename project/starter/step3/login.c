@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "hash_utils.h"
 
 #define MAX_LINE_LENGTH 200
 #define MAX_USERNAME_LENGTH 50
@@ -9,6 +10,32 @@
 #define FILE_HASHED_USERS "hashed_users.txt"
 #define MAX_HASH_LENGTH 65
 #define HEX_SALT_LENGTH 5
+#define SALT_LENGTH 2
+
+// Function to convert hexadecimal string to bytes
+int hex_to_bytes(const char *hex_str, unsigned char *out) {
+    size_t len = strlen(hex_str);
+
+    // Length must be even
+    if (len % 2 != 0) {
+        return -1;
+    }
+
+    size_t byte_len = len / 2;
+
+    for (size_t i = 0; i < byte_len; i++) {
+        unsigned int value;
+
+        // Read two hex characters at a time
+        if (sscanf(&hex_str[i * 2], "%2x", &value) != 1) {
+            return -1; // invalid hex
+        }
+
+        out[i] = (unsigned char)value;
+    }
+
+    return (int)byte_len; // return number of bytes written
+}
 
 // Function to trim newline characters
 void trim_newline(char* str) {
@@ -30,11 +57,12 @@ int check_login(const char* username, const char* password) {
     char file_username[MAX_USERNAME_LENGTH];
     char file_salt_hex[HEX_SALT_LENGTH];
     char file_hashed_password[MAX_HASH_LENGTH];
+    unsigned char file_salt[SALT_LENGTH];
+    char hashed_password[MAX_HASH_LENGTH];
 
     while (fgets(line, sizeof(line), file)) {
         // Remove the newline character
         trim_newline(line);
-        printf("debug read line: %s\n", line);
 
 
         // Split the line into username and password
@@ -50,16 +78,16 @@ int check_login(const char* username, const char* password) {
                 }
             }
         }
-        printf("debug read username: %s\n", file_username);
-        printf("debug read salt_hex: %s\n", file_salt_hex);
-        printf("debug read hashed_password: %s\n", file_hashed_password);
-        printf("debug extracted values: %s, %s, %s\n", file_username, file_salt_hex, file_hashed_password);
+
+        hex_to_bytes(file_salt_hex, file_salt);
+        hash_password(password, file_salt, hashed_password);
 
         // Compare entered username and password with the file's values
-        // if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
-        //     fclose(file);
-        //     return 1;  // Login successful
-        // }
+        if (strcmp(username, file_username) == 0
+            && strcmp(hashed_password, file_hashed_password) == 0) {
+            fclose(file);
+            return 1;  // Login successful
+        }
     }
 
     fclose(file);
@@ -70,8 +98,6 @@ int main() {
     char username[MAX_USERNAME_LENGTH];
     char password[MAX_PASSWORD_LENGTH];
     char command[MAX_COMMAND_LENGTH];
-
-    printf("Running login...\n");
 
     // Prompt user for username and password
     printf("Enter username: ");
