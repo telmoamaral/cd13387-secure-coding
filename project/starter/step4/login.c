@@ -77,6 +77,7 @@ int check_login(const char* username, const char* password) {
                 token = strtok(NULL, ":");
                 if (token != NULL) {
                     strcpy(file_hashed_password, token);
+//TODO: this is not really needed, because this function is only to check the credentials; remove also counter var
                     token = strtok(NULL, "\n");
                     if (token != NULL) {
                         strcpy(file_counter, token);
@@ -100,6 +101,7 @@ int check_login(const char* username, const char* password) {
     return 0;  // Login failed
 }
 
+//TODO: remove this and all revert main() to original
 void sanitize_user_input(const char* user_input, char* output, uint len){
     // Safe copy
 

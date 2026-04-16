@@ -78,7 +78,7 @@ int check_login(const char* username, const char* password) {
                 }
             }
         }
-
+//TODO: it would be better to only hash the password if the username matches
         hex_to_bytes(file_salt_hex, file_salt);
         hash_password(password, file_salt, hashed_password);
 
