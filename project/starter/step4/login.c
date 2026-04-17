@@ -221,7 +221,8 @@ int check_login(const char* username, const char* password) {
                 return 1;
             }
             else {
-                update_failed_login_counter(username, counter + 1);
+                // Set counter to the limit and start the timer
+                update_failed_login_counter(username, MAX_LOGIN_ATTEMPTS);
                 printf(
                     "Too many failed attempts. Please wait %0.1f seconds to retry.\n",
                     BLOCKED_USER_TIMER / 1000.0
@@ -229,7 +230,7 @@ int check_login(const char* username, const char* password) {
                 return 0;
             }
         }
-        else {  // counter >= MAX_LOGIN_ATTEMPTS
+        else {  // counter == MAX_LOGIN_ATTEMPTS
             unsigned long time_ellapsed = get_milliseconds_since_epoch() - time;
             bool timer_running = (time_ellapsed < BLOCKED_USER_TIMER);
 
@@ -246,7 +247,13 @@ int check_login(const char* username, const char* password) {
                     return 1;
                 }
                 else {
-                    update_failed_login_counter(username, 1);
+                    // Keep the counter at the limit, and restart the timer on
+                    // every new failed login
+                    update_failed_login_counter(username, MAX_LOGIN_ATTEMPTS);
+                    printf(
+                        "Too many failed attempts. Please wait %0.1f seconds to retry.\n",
+                        BLOCKED_USER_TIMER / 1000.0
+                    );
                     return 0;
                 }
             }
