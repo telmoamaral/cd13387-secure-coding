@@ -16,7 +16,7 @@
 #define HEX_SALT_LENGTH 5
 #define SALT_LENGTH 2
 #define COUNTER_STR_LENGH 2
-#define TIME_STR_LENGTH 14 // String with time in ms since Epoch and a \0
+#define TIME_STR_LENGTH 14 // For string with time in ms since Epoch and a \0
 #define MAX_LOGIN_ATTEMPTS 3
 #define BLOCKED_USER_TIMER 5000
 
@@ -232,7 +232,7 @@ int check_login(const char* username, const char* password) {
         else {  // counter >= MAX_LOGIN_ATTEMPTS
             unsigned long time_ellapsed = get_milliseconds_since_epoch() - time;
             bool timer_running = (time_ellapsed < BLOCKED_USER_TIMER);
-            
+
             if (timer_running) {
                 printf(
                     "Too many failed attempts. Please wait %0.1f seconds to retry.\n",
