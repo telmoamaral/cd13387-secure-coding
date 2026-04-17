@@ -4,7 +4,6 @@
 #include "hash_utils.h"
 
 #define MAX_LINE_LENGTH 200
-#define MAX_USER_INPUT_LENGTH 100
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
 #define MAX_COMMAND_LENGTH 50
@@ -59,7 +58,6 @@ int check_login(const char* username, const char* password) {
     char file_username[MAX_USERNAME_LENGTH];
     char file_salt_hex[HEX_SALT_LENGTH];
     char file_hashed_password[MAX_HASH_LENGTH];
-    char file_counter[2];
     unsigned char file_salt[SALT_LENGTH];
     char hashed_password[MAX_HASH_LENGTH];
 
@@ -67,7 +65,7 @@ int check_login(const char* username, const char* password) {
         // Remove the newline character
         trim_newline(line);
 
-        // Split the line into username, salt hex, hashed password and counter
+        // Split the line into username, salt hex and hashed password
         char* token = strtok(line, ":");
         if (token != NULL) {
             strcpy(file_username, token);
@@ -77,23 +75,21 @@ int check_login(const char* username, const char* password) {
                 token = strtok(NULL, ":");
                 if (token != NULL) {
                     strcpy(file_hashed_password, token);
-//TODO: this is not really needed, because this function is only to check the credentials; remove also counter var
-                    token = strtok(NULL, "\n");
-                    if (token != NULL) {
-                        strcpy(file_counter, token);
-                    }
                 }
             }
         }
 
-        hex_to_bytes(file_salt_hex, file_salt);
-        hash_password(password, file_salt, hashed_password);
+        // Compare entered username with the file's value
+        if (strcmp(username, file_username) == 0) {
+            // Hash entered password together with file's salt
+            hex_to_bytes(file_salt_hex, file_salt);
+            hash_password(password, file_salt, hashed_password);
 
-        // Compare entered username and password with the file's values
-        if (strcmp(username, file_username) == 0
-            && strcmp(hashed_password, file_hashed_password) == 0) {
-            fclose(file);
-            return 1;  // Login successful
+            // Compare entered password with the file's value
+            if (strcmp(hashed_password, file_hashed_password) == 0) {
+                fclose(file);
+                return 1;  // Login successful
+            }
         }
     }
 
@@ -101,34 +97,19 @@ int check_login(const char* username, const char* password) {
     return 0;  // Login failed
 }
 
-//TODO: remove this and all revert main() to original
-void sanitize_user_input(const char* user_input, char* output, uint len){
-    // Safe copy
-
-    // Ensure null termination
-}
-
 int main() {
-    char user_input[MAX_USER_INPUT_LENGTH];
-    char user_input_2[MAX_USER_INPUT_LENGTH];
     char username[MAX_USERNAME_LENGTH];
     char password[MAX_PASSWORD_LENGTH];
     char command[MAX_COMMAND_LENGTH];
 
     // Prompt user for username and password
     printf("Enter username: ");
-    fgets(user_input, sizeof(user_input), stdin);
-    trim_newline(user_input);  // Remove newline character
-    strncpy(username, user_input, MAX_USERNAME_LENGTH - 1);
-    username[MAX_USERNAME_LENGTH - 1] = '\0';
-    printf("debug username: %s\n", username);
+    fgets(username, sizeof(username), stdin);
+    trim_newline(username);  // Remove newline character
 
     printf("Enter password: ");
-    fgets(user_input_2, sizeof(user_input_2), stdin);
-    trim_newline(user_input_2);  // Remove newline character
-    strncpy(password, user_input_2, MAX_PASSWORD_LENGTH - 1);
-    password[MAX_PASSWORD_LENGTH - 1] = '\0';
-    printf("debug password: %s\n", password);
+    fgets(password, sizeof(password), stdin);
+    trim_newline(password);  // Remove newline character
 
     // Check login credentials
     if (check_login(username, password)) {
