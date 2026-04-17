@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include "hash_utils.h"
 
-#define MAX_LINE_LENGTH 100
+#define MAX_LINE_LENGTH 200
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
 #define MAX_HASH_LENGTH 65
 #define SALT_LENGTH 2
 
 #define COUNTER "0"
+#define TIME "0000000000000"
 #define FILE_INPUT "users.txt"
 #define FILE_OUTPUT "hashed_users.txt"
 
@@ -65,8 +66,18 @@ int main() {
         char salt_hex[SALT_LENGTH * 2 + 1];
         bytes_to_hex(salt, SALT_LENGTH, salt_hex);
 
-        // Write to output file
-        fprintf(output_file, "%s:%s:%s:%s\n", username, salt_hex, hashed_password, COUNTER);
+        // Write to output file, initialising the counter of failed login
+        // attempts with "0" and the time of the last failed login with a
+        // placeholder value
+        fprintf(
+            output_file,
+            "%s:%s:%s:%s:%s\n",
+            username,
+            salt_hex,
+            hashed_password,
+            COUNTER,
+            TIME
+        );
     }
 
     fclose(input_file);

@@ -13,6 +13,6 @@ trap 'term_handler' INT TERM
 /app/generate_hashed_users
 
 while true; do
-  gdb -ex "run" -ex "quit" -ex "bt" --args /app/login
-#  /app/login
+  # gdb -ex "run" -ex "quit" -ex "bt" --args /app/login
+  /app/login
 done
