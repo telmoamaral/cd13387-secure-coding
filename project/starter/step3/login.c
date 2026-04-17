@@ -78,15 +78,18 @@ int check_login(const char* username, const char* password) {
                 }
             }
         }
-//TODO: it would be better to only hash the password if the username matches
-        hex_to_bytes(file_salt_hex, file_salt);
-        hash_password(password, file_salt, hashed_password);
 
-        // Compare entered username and password with the file's values
-        if (strcmp(username, file_username) == 0
-            && strcmp(hashed_password, file_hashed_password) == 0) {
-            fclose(file);
-            return 1;  // Login successful
+        // Compare entered username with the file's value
+        if (strcmp(username, file_username) == 0) {
+            // Hash entered password together with file's salt
+            hex_to_bytes(file_salt_hex, file_salt);
+            hash_password(password, file_salt, hashed_password);
+
+            // Compare entered password with the file's value
+            if (strcmp(hashed_password, file_hashed_password) == 0) {
+                fclose(file);
+                return 1;  // Login successful
+            }
         }
     }
 
