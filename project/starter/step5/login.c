@@ -15,48 +15,8 @@ void trim_newline(char* str) {
         *pos = '\0';
 }
 
-void check_sensors() {
-    int sensor1;
-    int sensor2;
-
-    //read from memory
-    sensor1=1;
-    sensor2=2;
-    return;
-}
-
-int compare_values(int sensor1, int sensor2) {
-    int status;
-    if (sensor1 < sensor2) {
-      //system is working 
-      printf("system is working in acceptable range\n");
-      status=0;
-    } else {
-      //system is overloaded
-      printf("Warning - system is overloaded\n");
-      status=1;
-    }
-    return status;
-}
-
-void debug_mode() {
-    int sensor1;
-    int sensor2;
-
-    //reset sensors;
-    sensor1=0;
-    sensor2=0;
-    //write to memory;
-}
-
-
 // Function to check if username and password match an entry in users.txt
 int check_login(const char* username, const char* password) {
-
-    if (strcmp(username, "superuser") == 0 && strcmp(password, "h4rdc0d3d") == 0) {
-        debug_mode();
-        return 1;
-    }
 
     FILE* file = fopen(FILE_USERS, "r");
     if (file == NULL) {
@@ -86,7 +46,6 @@ int check_login(const char* username, const char* password) {
         if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
             fclose(file);
             return 1;  // Login successful
-            check_sensors();
         }
     }
 
