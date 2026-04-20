@@ -99,7 +99,7 @@ void extract_user_info(
 
 // Function to update the counter of failed login attempts for a given user in
 // hashed_users.txt, as well as the time of the last failed login
-int update_failed_login_counter(char* username, int counter) {
+int update_failed_login_info(char* username, int counter) {
     FILE* input_file = fopen(FILE_HASHED_USERS, "r");
     if (input_file == NULL) {
         printf("Could not open hashed_users.txt\n");
@@ -205,24 +205,29 @@ int check_login(const char* username, const char* password) {
         // Compare entered password with the file's value
         bool password_ok = (strcmp(hashed_password, file_hashed_password) == 0);
 
+        // If user isn't about to reach the limit
         if (counter < MAX_LOGIN_ATTEMPTS - 1) {
             if (password_ok) {
-                update_failed_login_counter(username, 0);
+                // Reset counter
+                update_failed_login_info(username, 0);
                 return 1;
             }
             else {
-                update_failed_login_counter(username, counter + 1);                
+                // Increment counter
+                update_failed_login_info(username, counter + 1);                
                 return 0;
             }
         }
+        // If user is about to reach the limit
         else if (counter == MAX_LOGIN_ATTEMPTS - 1) {
             if (password_ok) {
-                update_failed_login_counter(username, 0);
+                // Reset counter
+                update_failed_login_info(username, 0);
                 return 1;
             }
             else {
-                // Set counter to the limit and start the timer
-                update_failed_login_counter(username, MAX_LOGIN_ATTEMPTS);
+                // User reached the limit; set counter to the limit and start timer
+                update_failed_login_info(username, MAX_LOGIN_ATTEMPTS);
                 printf(
                     "Too many failed attempts. Please wait %0.1f seconds to retry.\n",
                     BLOCKED_USER_TIMER / 1000.0
@@ -230,11 +235,13 @@ int check_login(const char* username, const char* password) {
                 return 0;
             }
         }
+        // If user has already reached the limit
         else {  // counter == MAX_LOGIN_ATTEMPTS
             unsigned long time_ellapsed = get_milliseconds_since_epoch() - time;
             bool timer_running = (time_ellapsed < BLOCKED_USER_TIMER);
 
             if (timer_running) {
+                // Don't update failed login info, to allow the timer to run out
                 printf(
                     "Too many failed attempts. Please wait %0.1f seconds to retry.\n",
                     (BLOCKED_USER_TIMER - time_ellapsed) / 1000.0
@@ -243,13 +250,13 @@ int check_login(const char* username, const char* password) {
             }
             else {
                 if (password_ok) {
-                    update_failed_login_counter(username, 0);
+                    // Reset timer
+                    update_failed_login_info(username, 0);
                     return 1;
                 }
                 else {
-                    // Keep the counter at the limit, and restart the timer on
-                    // every new failed login
-                    update_failed_login_counter(username, MAX_LOGIN_ATTEMPTS);
+                    // Restart the timer on every new failed login
+                    update_failed_login_info(username, MAX_LOGIN_ATTEMPTS);
                     printf(
                         "Too many failed attempts. Please wait %0.1f seconds to retry.\n",
                         BLOCKED_USER_TIMER / 1000.0
