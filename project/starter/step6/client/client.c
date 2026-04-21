@@ -13,7 +13,7 @@
 #define PORT 8443
 #define SERVER_IP "server"  // Use "server" for Docker or "127.0.0.1" for local testing
 #define BUFFER_SIZE 4096
-#define OUTPUT_FILE "received_update.bin"
+#define OUTPUT_FILE "received_package.zip"
 
 void initialize_openssl() {
     SSL_load_error_strings();
